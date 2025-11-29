@@ -14,23 +14,14 @@ export const metadata: Metadata = {
   title: "AI Safety Connect | Connecting AI Safety Research Communities",
   description:
     "Bridge the gap between academic researchers and EA/LessWrong AI safety communities. Map researchers, projects, and topics to accelerate AI safety collaboration.",
-  generator: "v0.app",
   icons: {
     icon: [
       {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
+        url: "/favicon.svg",
         type: "image/svg+xml",
       },
     ],
-    apple: "/apple-icon.png",
+    apple: "/favicon.svg",
   },
 }
 

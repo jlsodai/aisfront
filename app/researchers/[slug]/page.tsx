@@ -35,7 +35,7 @@ export default async function ResearcherPage({ params }: { params: Promise<{ slu
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="pt-20">
+      <main className="pt-20 mx-auto max-w-7xl px-6 lg:px-8">
         <ResearcherProfile researcher={researcher} />
       </main>
       <Footer />

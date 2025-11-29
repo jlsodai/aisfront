@@ -103,5 +103,5 @@ export function NetworkVisualization() {
     }
   }, [])
 
-  return <canvas ref={canvasRef} className="w-full h-full rounded-2xl border border-border bg-card/50" />
+  return <canvas ref={canvasRef} className="w-full h-full rounded-2xl" />
 }

@@ -5,6 +5,8 @@ AI Safety Connect is a platform designed to bridge the gap between academic rese
 ## Features
 
 - **Researcher Directory**: Browse and search for researchers across different communities (Academia, EA, Rationalist).
+- **Projects Directory**: Discover AI safety projects and initiatives.
+- **Papers Archive**: Access a curated collection of AI safety research papers.
 - **Researcher Profiles**: Detailed profiles showcasing research interests, publications, and affiliations.
 - **Network Visualization**: Visual representation of connections between researchers and topics.
 - **Resource Hub**: Access to data sources and community resources.
@@ -40,6 +42,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `app/`: Next.js App Router pages and layouts.
   - `about/`: About page.
   - `researchers/`: Researcher directory and individual profile pages.
+  - `projects/`: Projects directory.
+  - `papers/`: Papers archive.
 - `components/`: Reusable UI components.
   - `ui/`: Base UI components (buttons, inputs, etc.).
 - `lib/`: Utility functions and mock data.

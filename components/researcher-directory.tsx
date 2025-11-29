@@ -4,6 +4,7 @@ import { useState, useMemo } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ResearcherCard } from "@/components/researcher-card"
+import { Pagination } from "@/components/pagination"
 import { Search, Filter, LayoutGrid, List } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { researchers, communityLabels } from "@/lib/researchers-data"
@@ -21,12 +22,15 @@ const topics = [
   "AI Risk",
 ]
 
+const ITEMS_PER_PAGE = 9
+
 export function ResearcherDirectory() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCommunity, setSelectedCommunity] = useState<string>("all")
   const [selectedTopic, setSelectedTopic] = useState<string>("All Topics")
   const [sortBy, setSortBy] = useState<string>("relevance")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const [currentPage, setCurrentPage] = useState(1)
 
   const filteredResearchers = useMemo(() => {
     let filtered = researchers
@@ -69,6 +73,16 @@ export function ResearcherDirectory() {
 
     return filtered
   }, [searchQuery, selectedCommunity, selectedTopic, sortBy])
+
+  useMemo(() => {
+    setCurrentPage(1)
+  }, [searchQuery, selectedCommunity, selectedTopic, sortBy])
+
+  const totalPages = Math.ceil(filteredResearchers.length / ITEMS_PER_PAGE)
+  const paginatedResearchers = filteredResearchers.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  )
 
   return (
     <div className="space-y-8">
@@ -178,21 +192,31 @@ export function ResearcherDirectory() {
         )}
       </div>
 
-      {filteredResearchers.length > 0 ? (
-        <div
-          className={
-            viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"
-          }
-        >
-          {filteredResearchers.map((researcher) => (
-            <ResearcherCard
-              key={researcher.id}
-              researcher={researcher}
-              viewMode={viewMode}
-              communityLabels={communityLabels}
-            />
-          ))}
-        </div>
+      {paginatedResearchers.length > 0 ? (
+        <>
+          <div
+            className={
+              viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"
+            }
+          >
+            {paginatedResearchers.map((researcher) => (
+              <ResearcherCard
+                key={researcher.id}
+                researcher={researcher}
+                viewMode={viewMode}
+                communityLabels={communityLabels}
+              />
+            ))}
+          </div>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={filteredResearchers.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+          />
+        </>
       ) : (
         <div className="text-center py-16">
           <div className="mx-auto w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">

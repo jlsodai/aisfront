@@ -5,12 +5,13 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
 
-  const isActive = (path: string) => pathname === path
+  const isActive = (path: string) => pathname === path || pathname.startsWith(path + "/")
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -19,7 +20,7 @@ export function Header() {
           <Link href="/" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
               <svg
-                className="h-5 w-5 text-background"
+                className="h-5 w-5 text-accent-foreground"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -36,42 +37,55 @@ export function Header() {
           <div className="hidden md:flex items-center gap-8">
             <Link
               href="/researchers"
-              className={`text-sm transition-colors ${isActive("/researchers") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                }`}
+              className={`text-sm transition-colors ${
+                isActive("/researchers") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               Researchers
             </Link>
-            <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </Link>
-            <Link href="/#sources" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Data Sources
+            <Link
+              href="/papers"
+              className={`text-sm transition-colors ${
+                isActive("/papers") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Papers
             </Link>
             <Link
-              href="/#how-it-works"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              href="/projects"
+              className={`text-sm transition-colors ${
+                isActive("/projects") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+              }`}
             >
-              How It Works
+              Projects
+            </Link>
+            {/* <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Features
             </Link>
             <Link
               href="/about"
-              className={`text-sm transition-colors ${isActive("/about") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-                }`}
+              className={`text-sm transition-colors ${
+                isActive("/about") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               About
-            </Link>
+            </Link> */}
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-2">
+            <ThemeToggle />
             <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
               Sign In
             </Button>
             <Button className="bg-foreground text-background hover:bg-foreground/90">Get Early Access</Button>
           </div>
 
-          <button className="md:hidden text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <button className="text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
 
         {mobileMenuOpen && (
@@ -80,21 +94,35 @@ export function Header() {
               <Link
                 href="/researchers"
                 className={`text-sm ${isActive("/researchers") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Researchers
               </Link>
-              <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground">
+              <Link
+                href="/papers"
+                className={`text-sm ${isActive("/papers") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Papers
+              </Link>
+              <Link
+                href="/projects"
+                className={`text-sm ${isActive("/projects") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Projects
+              </Link>
+              <Link
+                href="/#features"
+                className="text-sm text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Features
-              </Link>
-              <Link href="/#sources" className="text-sm text-muted-foreground hover:text-foreground">
-                Data Sources
-              </Link>
-              <Link href="/#how-it-works" className="text-sm text-muted-foreground hover:text-foreground">
-                How It Works
               </Link>
               <Link
                 href="/about"
                 className={`text-sm ${isActive("/about") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
+                onClick={() => setMobileMenuOpen(false)}
               >
                 About
               </Link>

@@ -40,8 +40,8 @@ export function NetworkVisualization() {
       nodes.push({
         x: Math.random() * rect.width,
         y: Math.random() * rect.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
+        vx: (Math.random() - 0.5) * 3,
+        vy: (Math.random() - 0.5) * 3,
         radius: Math.random() * 4 + 3,
         type: types[Math.floor(Math.random() * types.length)],
       })

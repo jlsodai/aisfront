@@ -16,12 +16,11 @@ export const metadata: Metadata = {
     "Bridge the gap between academic researchers and EA/LessWrong AI safety communities. Map researchers, projects, and topics to accelerate AI safety collaboration.",
   icons: {
     icon: [
-      {
-        url: "/favicon.svg",
-        type: "image/svg+xml",
-      },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.png", type: "image/png" },
     ],
-    apple: "/favicon.svg",
+    apple: "/apple-icon.png",
   },
 }
 

@@ -7,8 +7,7 @@ import { ResearcherCard } from "@/components/researcher-card"
 import { Pagination } from "@/components/pagination"
 import { Search, Filter, LayoutGrid, List } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { communityLabels } from "@/lib/researchers-data"
-import { researchers } from "@/lib/fictional-researchers-data"
+import { communityLabels, researchers } from "@/lib/researchers-data"
 
 const topics = [
   "All Topics",

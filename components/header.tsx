@@ -1,83 +1,102 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Menu, X } from "lucide-react"
+import { Menu, X, User } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { createClient } from "@/lib/supabase/client"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
+import { Logo } from "@/components/logo"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [loading, setLoading] = useState(true)
   const pathname = usePathname()
 
   const isActive = (path: string) => pathname === path || pathname.startsWith(path + "/")
+
+  useEffect(() => {
+    const supabase = createClient()
+
+    // Get initial user
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+      setLoading(false)
+    })
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <nav className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
-              <svg
-                className="h-5 w-5 text-accent-foreground"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
-            </div>
-            <span className="text-xl font-semibold text-foreground">AI Safety Connect</span>
-          </Link>
+          <Logo />
 
           <div className="hidden md:flex items-center gap-8">
             <Link
               href="/researchers"
-              className={`text-sm transition-colors ${
-                isActive("/researchers") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`text-sm transition-colors ${isActive("/researchers") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               Researchers
             </Link>
             <Link
               href="/papers"
-              className={`text-sm transition-colors ${
-                isActive("/papers") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`text-sm transition-colors ${isActive("/papers") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               Papers
             </Link>
             <Link
               href="/projects"
-              className={`text-sm transition-colors ${
-                isActive("/projects") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`text-sm transition-colors ${isActive("/projects") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               Projects
             </Link>
-            {/* <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </Link>
             <Link
               href="/about"
-              className={`text-sm transition-colors ${
-                isActive("/about") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`text-sm transition-colors ${isActive("/about") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               About
-            </Link> */}
+            </Link>
           </div>
 
           <div className="hidden md:flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-              Sign In
-            </Button>
-            <Button className="bg-foreground text-background hover:bg-foreground/90">Get Early Access</Button>
+            {loading ? (
+              <div className="h-9 w-20 bg-muted animate-pulse rounded-md" />
+            ) : user ? (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Dashboard
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground" asChild>
+                  <Link href="/auth/login">Sign In</Link>
+                </Button>
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90" asChild>
+                  <Link href="/auth/sign-up">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
@@ -113,13 +132,6 @@ export function Header() {
                 Projects
               </Link>
               <Link
-                href="/#features"
-                className="text-sm text-muted-foreground hover:text-foreground"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Features
-              </Link>
-              <Link
                 href="/about"
                 className={`text-sm ${isActive("/about") ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
                 onClick={() => setMobileMenuOpen(false)}
@@ -127,10 +139,29 @@ export function Header() {
                 About
               </Link>
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
-                <Button variant="ghost" className="justify-start text-muted-foreground">
-                  Sign In
-                </Button>
-                <Button className="bg-foreground text-background">Get Early Access</Button>
+                {loading ? (
+                  <div className="h-9 w-full bg-muted animate-pulse rounded-md" />
+                ) : user ? (
+                  <Button asChild onClick={() => setMobileMenuOpen(false)}>
+                    <Link href="/dashboard" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Dashboard
+                    </Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="ghost" className="justify-start text-muted-foreground" asChild>
+                      <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                        Sign In
+                      </Link>
+                    </Button>
+                    <Button className="bg-primary text-primary-foreground" asChild>
+                      <Link href="/auth/sign-up" onClick={() => setMobileMenuOpen(false)}>
+                        Get Started
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

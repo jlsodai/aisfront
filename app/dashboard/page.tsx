@@ -21,7 +21,7 @@ export default async function DashboardPage() {
     .from("profiles")
     .select("full_name, display_name, is_public")
     .eq("id", user.id)
-    .single()
+    .maybeSingle()
 
   const displayName =
     profile?.display_name ||

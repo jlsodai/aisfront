@@ -4,7 +4,7 @@ import { Header } from "@/components/header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
-import { Users, FileText, FolderKanban, BookOpen, Settings, Bell } from "lucide-react"
+import { Users, FileText, FolderKanban, BookOpen, Settings, Bell, UserCircle } from "lucide-react"
 import { SignOutButton } from "@/components/sign-out-button"
 
 export default async function DashboardPage() {
@@ -16,7 +16,20 @@ export default async function DashboardPage() {
   }
 
   const user = data.user
-  const displayName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Researcher"
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name, display_name, is_public")
+    .eq("id", user.id)
+    .single()
+
+  const displayName =
+    profile?.display_name ||
+    profile?.full_name ||
+    user.user_metadata?.full_name ||
+    user.email?.split("@")[0] ||
+    "Researcher"
+  const hasPublicProfile = profile?.is_public || false
 
   return (
     <div className="min-h-screen bg-background">
@@ -31,12 +44,33 @@ export default async function DashboardPage() {
             <Button variant="outline" size="icon">
               <Bell className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon">
-              <Settings className="h-4 w-4" />
+            <Button variant="outline" size="icon" asChild>
+              <Link href="/dashboard/profile">
+                <Settings className="h-4 w-4" />
+              </Link>
             </Button>
             <SignOutButton />
           </div>
         </div>
+
+        {!hasPublicProfile && (
+          <Card className="mb-6 bg-accent/10 border-accent/30">
+            <CardContent className="flex items-center justify-between py-4">
+              <div className="flex items-center gap-3">
+                <UserCircle className="h-5 w-5 text-accent" />
+                <div>
+                  <p className="font-medium text-foreground">Complete your researcher profile</p>
+                  <p className="text-sm text-muted-foreground">
+                    Make your profile public to be discoverable in the directory
+                  </p>
+                </div>
+              </div>
+              <Button asChild>
+                <Link href="/dashboard/profile">Edit Profile</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Quick Stats */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -84,6 +118,23 @@ export default async function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* <Card className="bg-card/50 border-border/50 hover:border-primary/50 transition-colors">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UserCircle className="h-5 w-5 text-primary" />
+                Manage Profile
+              </CardTitle>
+              <CardDescription>
+                Update your researcher profile, add publications, and manage your visibility
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild>
+                <Link href="/dashboard/profile">Edit Profile</Link>
+              </Button>
+            </CardContent>
+          </Card> */}
+
           <Card className="bg-card/50 border-border/50 hover:border-primary/50 transition-colors">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -139,7 +190,7 @@ export default async function DashboardPage() {
           <CardHeader>
             <CardTitle>Account Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-2 text-sm">
             <div className="flex justify-between py-2 border-b border-border/50">
               <span className="text-muted-foreground">Email</span>
               <span className="font-medium">{user.email}</span>

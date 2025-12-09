@@ -49,6 +49,7 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 # Optional: Redirect URL for local development authentication
 NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL=http://localhost:3000/auth/callback
+NEXT_PUBLIC_API_BASE_URL=https://your-api-gateway-url.com/api
 ```
 
 ### Mock API Server
